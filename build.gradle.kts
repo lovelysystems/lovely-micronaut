@@ -4,7 +4,7 @@ plugins {
     id("io.micronaut.minimal.library")
     kotlin("kapt")
     kotlin("plugin.allopen")
-    `java-test-fixtures`
+    `maven-publish`
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.kotlinx.kover")
 }
@@ -12,6 +12,8 @@ plugins {
 lovely {
     gitProject()
 }
+
+group = "com.lovelysystems"
 
 repositories {
     mavenCentral()
@@ -65,4 +67,22 @@ dependencies {
     implementation(micronautLibs.http.client)
     implementation(micronautLibs.management)
 
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/lovelysystems/lovely-micronaut")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        register<MavenPublication>("gpr") {
+            from(components["java"])
+        }
+    }
 }
