@@ -5,7 +5,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.withTimeout
+import java.time.Instant
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 /**
  * Maps all items of an [Iterable] with a given [concurrencyLevel] in parallel.
@@ -67,15 +70,16 @@ fun <K : Comparable<K>, T> Flow<T>.windowed(total: Long, keySelector: (T) -> K):
     }
 
 
+
 /**
- * Retries the given block with the given delays between executions until the block returns not null
+ * Retries the given block with the interval between executions until the block returns not null or the timeout is reached is exceeded
  */
-tailrec suspend fun <T> retryDelayedUntilSome(duration: Duration, block : suspend () -> T?) : T {
-    val value = block()
-    return if (value != null) {
+suspend fun <T> waitUntilSome(interval: Duration, timeout: Duration, block : suspend () -> T?) : T =
+    withTimeout(timeout.toLong(DurationUnit.MILLISECONDS)) {
+        var value = block()
+        while (value==null) {
+            delay(interval)
+            value = block()
+        }
         value
-    } else {
-        delay(duration)
-        retryDelayedUntilSome(duration, block)
     }
-}
