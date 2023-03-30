@@ -1,6 +1,7 @@
 package ls.coroutines
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.iterator.shouldNotHaveNext
 import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.delay
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlin.system.measureTimeMillis
+import kotlin.time.Duration.Companion.seconds
 
 class CoFunctionsTest : StringSpec({
 
@@ -52,4 +54,17 @@ class CoFunctionsTest : StringSpec({
         )
     }
 
+
+    "retry should happen until not null"  {
+
+        val returnValues = listOf(null, null, "some").iterator()
+
+        val interval = 1.seconds
+
+        val actValue = retryDelayedUntilSome(interval) {
+            returnValues.next()
+        }
+        actValue shouldBe "some"
+        returnValues.shouldNotHaveNext()
+    }
 })

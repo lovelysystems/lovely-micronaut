@@ -2,8 +2,10 @@ package ls.coroutines
 
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Semaphore
+import kotlin.time.Duration
 
 /**
  * Maps all items of an [Iterable] with a given [concurrencyLevel] in parallel.
@@ -63,3 +65,17 @@ fun <K : Comparable<K>, T> Flow<T>.windowed(total: Long, keySelector: (T) -> K):
             if (totalCollected == total) emit(windowEnd!! to window)
         }
     }
+
+
+/**
+ * Retries the given block with the given delays between executions until the block returns not null
+ */
+tailrec suspend fun <T> retryDelayedUntilSome(duration: Duration, block : suspend () -> T?) : T {
+    val value = block()
+    return if (value != null) {
+        value
+    } else {
+        delay(duration)
+        retryDelayedUntilSome(duration, block)
+    }
+}
