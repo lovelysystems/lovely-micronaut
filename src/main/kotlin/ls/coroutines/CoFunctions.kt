@@ -2,8 +2,12 @@ package ls.coroutines
 
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.withTimeout
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 /**
  * Maps all items of an [Iterable] with a given [concurrencyLevel] in parallel.
@@ -62,4 +66,19 @@ fun <K : Comparable<K>, T> Flow<T>.windowed(total: Long, keySelector: (T) -> K):
             totalCollected += 1
             if (totalCollected == total) emit(windowEnd!! to window)
         }
+    }
+
+
+
+/**
+ * Retries the given block with the interval between executions until the block returns not null or the timeout is reached is exceeded
+ */
+suspend fun <T> waitUntilNotNull(interval: Duration, timeout: Duration, block : suspend () -> T?) : T =
+    withTimeout(timeout.toLong(DurationUnit.MILLISECONDS)) {
+        var value = block()
+        while (value==null) {
+            delay(interval)
+            value = block()
+        }
+        value
     }
