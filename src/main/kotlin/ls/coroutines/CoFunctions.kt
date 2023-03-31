@@ -6,7 +6,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.withTimeout
-import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
@@ -74,7 +73,7 @@ fun <K : Comparable<K>, T> Flow<T>.windowed(total: Long, keySelector: (T) -> K):
 /**
  * Retries the given block with the interval between executions until the block returns not null or the timeout is reached is exceeded
  */
-suspend fun <T> waitUntilSome(interval: Duration, timeout: Duration, block : suspend () -> T?) : T =
+suspend fun <T> waitUntilNotNull(interval: Duration, timeout: Duration, block : suspend () -> T?) : T =
     withTimeout(timeout.toLong(DurationUnit.MILLISECONDS)) {
         var value = block()
         while (value==null) {

@@ -1,7 +1,6 @@
 package ls.coroutines
 
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.iterator.shouldNotHaveNext
 import io.kotest.matchers.longs.shouldBeLessThan
@@ -64,7 +63,7 @@ class CoFunctionsTest : StringSpec({
 
         val interval = 1.seconds
 
-        val actValue = waitUntilSome(interval, timeout = 5.seconds) {
+        val actValue = waitUntilNotNull(interval, timeout = 5.seconds) {
             returnValues.next()
         }
         actValue shouldBe "some"
@@ -77,7 +76,7 @@ class CoFunctionsTest : StringSpec({
         val interval = 1.seconds
 
         shouldThrow<TimeoutCancellationException> {
-            waitUntilSome(interval, timeout = 1.5.seconds) {
+            waitUntilNotNull(interval, timeout = 1.5.seconds) {
                 returnValues.next()
             }
         }
