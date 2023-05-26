@@ -7,6 +7,7 @@ plugins {
     `maven-publish`
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.kotlinx.kover")
+    `java-test-fixtures`
 }
 
 lovely {
@@ -67,6 +68,15 @@ dependencies {
     implementation(micronautLibs.http.client)
     implementation(micronautLibs.management)
 
+    //Testing
+    testImplementation(testLibs.kotest.framework.api)
+    testImplementation(testLibs.kotest.extensions.testcontainers)
+
+    // TestContainers
+    testImplementation(testLibs.kotest.extensions.testcontainers)
+    testFixturesCompileOnly(testLibs.kotest.framework.api)
+    testFixturesImplementation(testLibs.testcontainers)
+    testFixturesImplementation(libs.kotlin.reflect)
 }
 
 publishing {
