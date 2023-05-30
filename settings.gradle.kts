@@ -52,10 +52,6 @@ dependencyResolutionManagement {
             val kotestApiVersion = "5.5.5"
 
             library("kotest-framework-api", "io.kotest", "kotest-framework-api-jvm").version(kotestApiVersion)
-            library("kotest-runner","io.kotest", "kotest-runner-junit5").version(kotestApiVersion)
-            library("kotest-runner-jvm","io.kotest", "kotest-runner-junit5-jvm").version(kotestApiVersion)
-            library("kotest-datasets","io.kotest", "kotest-framework-datatest").version(kotestApiVersion)
-            library("kotest-assertions","io.kotest", "kotest-assertions-core").version(kotestApiVersion)
 
             library(
                 "kotest-extensions-testcontainers",
@@ -64,7 +60,6 @@ dependencyResolutionManagement {
             ).version("1.3.4")
 
             library("testcontainers", "org.testcontainers", "testcontainers").withoutVersion()
-            library("testcontainers-kafka", "org.testcontainers", "kafka").withoutVersion()
         }
     }
 }
