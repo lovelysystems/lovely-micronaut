@@ -37,6 +37,8 @@ dependencyResolutionManagement {
 
             library("$coroutinesPrefix-core", kotlinxGroup, "$coroutinesPrefix-core").version(coroutinesVersion)
             library("$coroutinesPrefix-reactor", kotlinxGroup, "$coroutinesPrefix-reactor").version(coroutinesVersion)
+            val kotlinVersion: String by settings
+            library("kotlin-reflect", "org.jetbrains.kotlin", "kotlin-reflect").version(kotlinVersion)
         }
 
         create("micronautLibs") {
@@ -46,6 +48,19 @@ dependencyResolutionManagement {
             library("http-client", "io.micronaut", "micronaut-http-client").withoutVersion()
         }
 
+        create("testLibs") {
+            val kotestApiVersion = "5.5.5"
+
+            library("kotest-framework-api", "io.kotest", "kotest-framework-api-jvm").version(kotestApiVersion)
+
+            library(
+                "kotest-extensions-testcontainers",
+                "io.kotest.extensions",
+                "kotest-extensions-testcontainers"
+            ).version("1.3.4")
+
+            library("testcontainers", "org.testcontainers", "testcontainers").withoutVersion()
+        }
     }
 }
 
