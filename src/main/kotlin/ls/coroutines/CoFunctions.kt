@@ -71,7 +71,8 @@ fun <K : Comparable<K>, T> Flow<T>.windowed(total: Long, keySelector: (T) -> K):
 
 
 /**
- * Retries the given block with the interval between executions until the block returns not null or the timeout is reached is exceeded
+ * Retries the given block with the interval between executions until the block returns not null
+ * or the timeout is exceeded (raises [TimeoutCancellationException])
  */
 suspend fun <T> waitUntilNotNull(interval: Duration, timeout: Duration, block : suspend () -> T?) : T =
     withTimeout(timeout.toLong(DurationUnit.MILLISECONDS)) {
