@@ -1,5 +1,12 @@
 # Changes
 
+## unreleased
+
+### Feature
+
+- upgrade to  micronaut 4.xx
+- upgrade to kotlin 1.9.10
+
 ## 2023-05-30 / 0.2.0
 
 ### Feature

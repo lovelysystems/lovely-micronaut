@@ -1,11 +1,8 @@
 package ls.coroutines
 
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
@@ -26,7 +23,7 @@ inline fun <T, R> Iterable<T>.mapInOrder(concurrencyLevel: Int, crossinline bloc
 /**
  * Maps all items of a [Flow] with a given [concurrencyLevel] in parallel without preserving order.
  */
-@OptIn(FlowPreview::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 fun <T, R> Flow<T>.concurrentMap(
     concurrencyLevel: Int,
     transform: suspend (T) -> R,

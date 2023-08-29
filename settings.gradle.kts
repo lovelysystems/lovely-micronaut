@@ -8,12 +8,12 @@ pluginManagement {
         kotlin("plugin.allopen") version kotlinVersion
         kotlin("kapt") version kotlinVersion
 
-        val micronautGradlePluginVersion = "3.7.4"
+        val micronautGradlePluginVersion = "4.0.2"
         id("io.micronaut.minimal.library") version micronautGradlePluginVersion
 
         id("com.lovelysystems.gradle") version "1.11.3"
         id("io.gitlab.arturbosch.detekt") version "1.22.0"
-        id("com.github.johnrengelman.shadow") version "8.1.0"
+        id("com.github.johnrengelman.shadow") version "8.1.1"
         id("org.jetbrains.kotlinx.kover") version "0.7.0-Alpha"
     }
 }
@@ -42,7 +42,7 @@ dependencyResolutionManagement {
         }
 
         create("micronautLibs") {
-            version("micronaut", "3.8.7")
+            version("micronaut", "4.0.5")
             library("management", "io.micronaut", "micronaut-management").withoutVersion()
             library("http", "io.micronaut", "micronaut-http").withoutVersion()
             library("http-client", "io.micronaut", "micronaut-http-client").withoutVersion()
