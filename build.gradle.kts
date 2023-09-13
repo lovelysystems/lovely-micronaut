@@ -54,29 +54,27 @@ allOpen {
 }
 
 micronaut {
-    version.set(micronautLibs.versions.micronaut)
     testRuntime("kotest5")
 }
 
 dependencies {
 
     // Kotlin
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.reactor)
+    implementation(mn.kotlinx.coroutines.core)
+    implementation(mn.kotlinx.coroutines.reactor)
 
     // Micronaut
-    implementation(micronautLibs.http.client)
-    implementation(micronautLibs.management)
+    implementation(mn.micronaut.http.client)
+    implementation(mn.micronaut.management)
 
     //Testing
     testImplementation(testLibs.kotest.framework.api)
     testImplementation(testLibs.kotest.extensions.testcontainers)
 
     // TestContainers
-    testImplementation(testLibs.kotest.extensions.testcontainers)
     testFixturesCompileOnly(testLibs.kotest.framework.api)
-    testFixturesImplementation(testLibs.testcontainers)
-    testFixturesImplementation(libs.kotlin.reflect)
+    testFixturesImplementation(mn.testcontainers.core)
+    testFixturesImplementation(mn.kotlin.reflect)
 }
 
 publishing {
