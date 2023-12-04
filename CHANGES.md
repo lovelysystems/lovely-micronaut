@@ -1,6 +1,6 @@
 # Changes
 
-## unreleased
+## 2023-12-04 / 0.4.0
 
 ### Development
 
