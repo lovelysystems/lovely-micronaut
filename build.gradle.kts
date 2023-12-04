@@ -94,3 +94,8 @@ publishing {
         }
     }
 }
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
