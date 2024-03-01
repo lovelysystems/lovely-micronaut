@@ -6,11 +6,12 @@ import java.net.ServerSocket
 
 fun findFreePort() = ServerSocket(0).use { it.localPort }
 class KraftKafkaContainer(
-    val hostPort: Int = findFreePort()
+    val hostPort: Int = findFreePort(),
+    image: String = "bitnami/kafka:3.4.0",
     //Cant rely on Testcontainer mapping because ADVERTISED_LISTENERS
     // need to be configured with an address that is reachable by the client, if relying on Testcontainer
     // mapping we won't know the outward port until the container has started
-) : GenericContainer<KraftKafkaContainer>(DockerImageName.parse("bitnami/kafka:3.4.0")) {
+) : GenericContainer<KraftKafkaContainer>(DockerImageName.parse(image)) {
 
     val kafkaInternalPort = 9092
 

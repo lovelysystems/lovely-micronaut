@@ -11,16 +11,16 @@ import kotlin.reflect.full.findAnnotation
  * It is activated by [KafkaTest] annotation.
  */
 object KafkaExtension : TestListener, ConstructorExtension {
-    val kafka: KraftKafkaContainer by lazy {
-        KraftKafkaContainer().also {
-            it.start()
-            System.setProperty("kafka.bootstrap.servers", it.bootstrapServers)
-        }
-    }
+
+    // allows to access SFTPExtension.sftp in tests
+    lateinit var kafka: KraftKafkaContainer
 
     override fun <T : Spec> instantiate(clazz: KClass<T>): Spec? {
-        clazz.findAnnotation<KafkaTest>()?.let {
-            kafka   //so that the container is started and initialized
+        clazz.findAnnotation<KafkaTest>()?.let { annotation ->
+            kafka = KraftKafkaContainer(image = annotation.image).also {container ->
+                container.start()
+                System.setProperty("kafka.bootstrap.servers", container.bootstrapServers)
+            }
         }
         return null
     }
