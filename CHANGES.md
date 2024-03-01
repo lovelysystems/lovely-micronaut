@@ -1,5 +1,11 @@
 # Changes
 
+## Unreleased
+
+### Feature
+
+- allow to pass kafka image/version to @KafkaTest annotation
+
 ## 2023-12-04 / 0.4.0
 
 ### Development
