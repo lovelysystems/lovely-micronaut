@@ -66,6 +66,7 @@ dependencies {
     // Micronaut
     implementation(mn.micronaut.http.client)
     implementation(mn.micronaut.management)
+    implementation(mn.micronaut.context.propagation)
 
     //Testing
     testImplementation(testLibs.kotest.framework.api)

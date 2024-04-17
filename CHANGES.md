@@ -1,5 +1,19 @@
 # Changes
 
+## 2024-04-17 / 1.0.0
+
+### Feature
+
+- Provide requestId in promtail logs
+
+### Breaking
+
+- Make sure the promtail logback logs regex is also adapted on the Kubernetes 
+  environment. Also provide this deployment note in the project when using this
+  version of lovely-micronaut.
+- regex:
+    expression: '^(?s)\[(?P<time>\S+)\] \[(?P<thread>\S+)\] \[(?P<level>\S+)\s?\] \[(?P<logger>\S+)\] \[(?P<requestid>\S*)\] - (?P<message>.*)$'
+
 ## 2024-03-01 / 0.5.0
 
 ### Feature
