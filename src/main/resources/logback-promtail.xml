@@ -2,8 +2,21 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Standard fields provided by logstash encoder:
+                 - @timestamp
+                 - @version
+                 - message
+                 - logger_name
+                 - thread_name
+                 - level
+                 - level_value
+                 - stack_trace (only on errors)
+                 https://github.com/logfellow/logstash-logback-encoder/tree/logstash-logback-encoder-7.4?tab=readme-ov-file#standard-fields
+                 The logstash encoder also provides all keys/values of th MDC context (e.g. requestId) -->
+
             <!-- uses ISO8601 date format -->
             <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSSXXX</timestampPattern>
+            <!-- provide the keys we expect in promtail/loki -->
             <fieldNames>
                 <timestamp>time</timestamp>
                 <version>version</version>

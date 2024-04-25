@@ -1,2 +1,0 @@
-logger:
-  config: logback-promtail.xml
