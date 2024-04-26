@@ -1,5 +1,21 @@
 # Changes
 
+## Unreleased
+
+### Feature
+
+- Provide requestId in promtail logs
+- Use JSON logging in promtail logback config
+- Upgrade Micronaut + gradle plugin to 4.3.7
+- Upgrade Kotlin to 1.9.23
+
+### Breaking
+
+- Make sure the promtail logback logs config is adapted on the Kubernetes 
+  environment. Should now use JSON logging, no parsing required anymore.
+- Also provide this deployment note in the project when using this
+  version of lovely-micronaut.
+
 ## 2024-03-01 / 0.5.0
 
 ### Feature

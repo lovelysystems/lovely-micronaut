@@ -8,18 +8,19 @@ pluginManagement {
         kotlin("plugin.allopen") version kotlinVersion
         kotlin("kapt") version kotlinVersion
 
-        val micronautGradlePluginVersion = "4.1.0"
+        val micronautGradlePluginVersion: String by settings
         id("io.micronaut.minimal.library") version micronautGradlePluginVersion
 
-        id("com.lovelysystems.gradle") version "1.11.3"
-        id("io.gitlab.arturbosch.detekt") version "1.22.0"
+        id("com.lovelysystems.gradle") version "1.12.0"
+        id("io.gitlab.arturbosch.detekt") version "1.23.6"
         id("com.github.johnrengelman.shadow") version "8.1.1"
         id("org.jetbrains.kotlinx.kover") version "0.7.0-Alpha"
     }
 }
 
 plugins {
-    id("io.micronaut.platform.catalog") version "4.1.0"
+    // cannot use micronautGradlePluginVersion here
+    id("io.micronaut.platform.catalog") version "4.3.7"
 }
 
 dependencyResolutionManagement {
@@ -31,10 +32,14 @@ dependencyResolutionManagement {
 
     // Catalogs
     versionCatalogs {
+        create("libs") {
+            library("logstash-logback-encoder", "net.logstash.logback", "logstash-logback-encoder").version("7.4")
+        }
         create("testLibs") {
-            val kotestApiVersion = "5.6.2"
+            val kotestApiVersion = "5.8.0"
 
             library("kotest-framework-api", "io.kotest", "kotest-framework-api-jvm").version(kotestApiVersion)
+            library("kotest-assertions-core", "io.kotest", "kotest-assertions-core").version(kotestApiVersion)
 
             library(
                 "kotest-extensions-testcontainers",
@@ -42,6 +47,8 @@ dependencyResolutionManagement {
                 "kotest-extensions-testcontainers"
             ).version("1.3.4")
 
+            // Logging
+            library("microutils-logging", "io.github.microutils", "kotlin-logging-jvm").version("3.0.5")
         }
     }
 }

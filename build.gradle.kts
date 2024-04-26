@@ -64,12 +64,25 @@ dependencies {
     implementation(mn.kotlinx.coroutines.reactor)
 
     // Micronaut
+    implementation(mn.micronaut.http)
     implementation(mn.micronaut.http.client)
     implementation(mn.micronaut.management)
+    implementation(mn.micronaut.context.propagation)
+
+    // Make the logback-promtail.xml encoder available for the runtime
+    runtimeOnly(libs.logstash.logback.encoder)
 
     //Testing
+    testImplementation(mn.jackson.module.kotlin)
+    testImplementation(mn.micronaut.kotlin.extension.functions)
     testImplementation(testLibs.kotest.framework.api)
+    testImplementation(testLibs.kotest.assertions.core)
     testImplementation(testLibs.kotest.extensions.testcontainers)
+    testImplementation(testLibs.microutils.logging)
+    testImplementation(mn.logback.classic)
+    testImplementation(libs.logstash.logback.encoder)
+
+    testRuntimeOnly(mn.micronaut.http.server.netty)
 
     // TestContainers
     testFixturesCompileOnly(testLibs.kotest.framework.api)
