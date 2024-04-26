@@ -78,9 +78,9 @@ dependencies {
     testImplementation(testLibs.microutils.logging)
     testImplementation(testLibs.micronaut.jackson.databind)
     testImplementation(mn.logback.classic)
+    testImplementation(libs.logstash.logback.encoder)
 
     testRuntimeOnly(mn.micronaut.http.server.netty)
-    testRuntimeOnly(libs.logstash.logback.encoder)
 
     // TestContainers
     testFixturesCompileOnly(testLibs.kotest.framework.api)

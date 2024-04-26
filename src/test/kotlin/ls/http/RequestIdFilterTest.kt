@@ -1,30 +1,64 @@
-import io.kotest.core.spec.style.StringSpec
+package ls.http
+
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import io.micronaut.context.propagation.slf4j.MdcPropagationContext
-import io.micronaut.core.annotation.NonNull
-import io.micronaut.core.propagation.MutablePropagatedContext
-import io.micronaut.core.propagation.PropagatedContext
-import io.micronaut.core.propagation.PropagatedContextElement
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.MutableHttpHeaders
-import io.mockk.*
-import ls.http.RequestIdFilter
-import org.slf4j.MDC
-import java.util.*
-import java.util.stream.Stream
+import io.micronaut.http.MediaType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.test.extensions.kotest5.annotation.MicronautTest
+import mu.KotlinLogging
+import org.slf4j.LoggerFactory
 
-class RequestIdFilterTest : StringSpec({
+@MicronautTest(transactional = false)
+class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
+    val memoryAppender = ListAppender<ILoggingEvent>()
+    val logger = LoggerFactory.getLogger("ls") as Logger
+    val initialLevel = logger.level
+
+    beforeSpec {
+        logger.level = Level.INFO
+        logger.addAppender(memoryAppender)
+        memoryAppender.start()
+    }
+
+    afterSpec {
+        logger.level = initialLevel
+    }
+
+    afterTest {
+        memoryAppender.list.clear()
+    }
+
     "rememberRequestId should propagate X-Request-ID header" {
-        val requestIdFilter = RequestIdFilter()
-        val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/")
+
+        val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
             .header("X-Request-ID", "testId")
+        httpClient.toBlocking().exchange(request, String::class.java)
 
-        val context = mockk<MutablePropagatedContext>()
-        every { context.add(any<PropagatedContextElement>()) } returns context
-
-        requestIdFilter.rememberRequestId(request, context)
-
-        verify { context.add(match { (it as MdcPropagationContext).state["requestId"] == "testId" }) }
+        memoryAppender.list.size shouldBe 1
+        memoryAppender.list[0].message shouldBe "Hello World"
+        // the requestId is stored in the MDC
+        memoryAppender.list[0].mdcPropertyMap["requestId"] shouldBe "testId"
     }
 })
+
+@Controller(produces = [MediaType.TEXT_PLAIN])
+class RequestIdFilterTestController {
+
+    private val logger = KotlinLogging.logger { }
+
+    @Get("/hello")
+    fun log(): String {
+        logger.info { "Hello World" }
+        return "OK"
+    }
+}
+
