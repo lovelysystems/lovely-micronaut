@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory
 
 import ch.qos.logback.core.AppenderBase
 import ch.qos.logback.core.OutputStreamAppender
+import io.kotest.matchers.maps.shouldNotHaveKey
 import net.logstash.logback.encoder.LogstashEncoder
 
 /**
@@ -76,13 +77,15 @@ class PromtailLoggingTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         infoLines.size shouldBe 1
         val infoObject = mapper.readValue<Map<String, String>>(infoLines.first())
         infoObject["level"] shouldBe "INFO"
-        infoObject["level_value"] shouldBe "20000"
         infoObject["logger"] shouldBe "ls.http.PromtailLoggingTest"
         infoObject["mdcTestKey"] shouldBe "some_value"
         infoObject["message"] shouldBe "Hello World\nLine2"
         infoObject["thread"].toString() shouldStartWith "default-nioEventLoopGroup"
         infoObject["time"].toString() shouldMatch timestampRegex
-        infoObject["version"] shouldBe "1"
+
+        // These Logstash default keys are explicitly ignored
+        infoObject shouldNotHaveKey("version")
+        infoObject shouldNotHaveKey("level_value")
 
         // The error log also contains a stack trace
         val errorLines = logs.filter { it.contains("ERROR") }

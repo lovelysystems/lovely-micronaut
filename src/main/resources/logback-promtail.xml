@@ -19,10 +19,11 @@
             <!-- provide the keys we expect in promtail/loki -->
             <fieldNames>
                 <timestamp>time</timestamp>
-                <version>version</version>
                 <message>message</message>
                 <logger>logger</logger>
                 <thread>thread</thread>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
             </fieldNames>
         </encoder>
     </appender>
