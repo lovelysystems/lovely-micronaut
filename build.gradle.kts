@@ -69,6 +69,9 @@ dependencies {
     implementation(mn.micronaut.management)
     implementation(mn.micronaut.context.propagation)
 
+    // Make the logback-promtail.xml encoder available for the runtime
+    runtimeOnly(libs.logstash.logback.encoder)
+
     //Testing
     testImplementation(mn.jackson.module.kotlin)
     testImplementation(mn.micronaut.kotlin.extension.functions)
