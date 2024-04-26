@@ -76,7 +76,6 @@ dependencies {
     testImplementation(testLibs.kotest.assertions.core)
     testImplementation(testLibs.kotest.extensions.testcontainers)
     testImplementation(testLibs.microutils.logging)
-    testImplementation(testLibs.micronaut.jackson.databind)
     testImplementation(mn.logback.classic)
     testImplementation(libs.logstash.logback.encoder)
 

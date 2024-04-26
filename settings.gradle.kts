@@ -49,8 +49,6 @@ dependencyResolutionManagement {
 
             // Logging
             library("microutils-logging", "io.github.microutils", "kotlin-logging-jvm").version("3.0.5")
-
-            library("micronaut-jackson-databind", "io.micronaut", "micronaut-jackson-databind").version("4.4.6")
         }
     }
 }
