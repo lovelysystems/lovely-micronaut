@@ -48,17 +48,17 @@ class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         // the requestId is stored in the MDC
         memoryAppender.list[0].mdcPropertyMap["requestId"] shouldBe "testId"
     }
-})
+}) {
 
-@Controller(produces = [MediaType.TEXT_PLAIN])
-class RequestIdFilterTestController {
+    @Controller(produces = [MediaType.TEXT_PLAIN])
+    class RequestIdFilterTestController {
 
-    private val logger = KotlinLogging.logger { }
+        private val logger = KotlinLogging.logger { }
 
-    @Get("/hello")
-    fun log(): String {
-        logger.info { "Hello World" }
-        return "OK"
+        @Get("/hello")
+        fun log(): String {
+            logger.info { "Hello World" }
+            return "OK"
+        }
     }
 }
-

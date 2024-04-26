@@ -77,7 +77,7 @@ class PromtailLoggingTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         val infoObject = mapper.readValue<Map<String, String>>(infoLines.first())
         infoObject["level"] shouldBe "INFO"
         infoObject["level_value"] shouldBe "20000"
-        infoObject["logger"] shouldBe "ls.http.PromtailLoggingTestController"
+        infoObject["logger"] shouldBe "ls.http.PromtailLoggingTest"
         infoObject["mdcTestKey"] shouldBe "some_value"
         infoObject["message"] shouldBe "Hello World\nLine2"
         infoObject["thread"].toString() shouldStartWith "default-nioEventLoopGroup"
@@ -90,20 +90,20 @@ class PromtailLoggingTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         val errorObject = mapper.readValue<Map<String, String>>(errorLines.first())
         errorObject["level"] shouldBe "ERROR"
         errorObject["message"] shouldBe "Unexpected error occurred: Goodbye World"
-        errorObject["stack_trace"].toString() shouldStartWith "java.lang.RuntimeException: Goodbye World\n\tat ls.http.PromtailLoggingTestController.log"
+        errorObject["stack_trace"].toString() shouldStartWith "java.lang.RuntimeException: Goodbye World\n\tat ls.http.PromtailLoggingTest"
     }
-})
+}) {
 
-@Controller(produces = [MediaType.TEXT_PLAIN])
-class PromtailLoggingTestController {
+    @Controller(produces = [MediaType.TEXT_PLAIN])
+    class PromtailLoggingTestController {
 
-    private val logger = KotlinLogging.logger { }
+        private val logger = KotlinLogging.logger { }
 
-    @Get("/log")
-    fun log(): String {
-        MDC.put("mdcTestKey", "some_value")
-        logger.info { "Hello World\nLine2" }
-        throw RuntimeException("Goodbye World")
+        @Get("/log")
+        fun log(): String {
+            MDC.put("mdcTestKey", "some_value")
+            logger.info { "Hello World\nLine2" }
+            throw RuntimeException("Goodbye World")
+        }
     }
 }
-
