@@ -1,5 +1,11 @@
 # Changes
 
+## unreleased
+
+### Feature
+
+- replace bitnami/kafka image with apache/kafka image in KafkaTestContainer (and upgrade it from 3.4.0 to 3.9.1)
+
 ## 2024-04-26 / 1.0.0
 
 ### Feature
