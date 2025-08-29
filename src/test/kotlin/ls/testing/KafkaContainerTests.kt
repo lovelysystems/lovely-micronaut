@@ -8,7 +8,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
-@KafkaTest("bitnami/kafka:3.4.1")
+@KafkaTest
 class KafkaContainerTests : StringSpec({
 
     val testTopic = "UNIT_TEST_TOPIC"

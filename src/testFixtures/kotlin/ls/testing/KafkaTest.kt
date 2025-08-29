@@ -6,5 +6,5 @@ package ls.testing
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class KafkaTest(
-    val image: String = "bitnami/kafka:3.4.0"
+    val image: String = "apache/kafka:3.9.1"
 )
