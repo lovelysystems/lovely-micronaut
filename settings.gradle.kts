@@ -40,15 +40,10 @@ dependencyResolutionManagement {
 
             library("kotest-framework-api", "io.kotest", "kotest-framework-api-jvm").version(kotestApiVersion)
             library("kotest-assertions-core", "io.kotest", "kotest-assertions-core").version(kotestApiVersion)
-
-            library(
-                "kotest-extensions-testcontainers",
-                "io.kotest.extensions",
-                "kotest-extensions-testcontainers"
-            ).version("1.3.4")
-
-            // Logging
             library("microutils-logging", "io.github.microutils", "kotlin-logging-jvm").version("3.0.5")
+            library("testcontainers-kafka", "org.testcontainers", "kafka").version("1.21.3")
+            library("commons-codec", "commons-codec", "commons-codec").version("1.19.0")
+            library("kafka-clients", "org.apache.kafka", "kafka-clients").version("3.9.1")
         }
     }
 }
