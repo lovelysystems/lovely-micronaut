@@ -1,5 +1,11 @@
 # Changes
 
+## unreleased
+
+### Feature
+
+- use `testcontainers-kafka` for the kotest KafkaExtension instead of a GenericContainer implementation
+
 ## 2025-08-29 / 1.1.0
 
 ### Feature

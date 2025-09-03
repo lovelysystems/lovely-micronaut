@@ -77,16 +77,17 @@ dependencies {
     testImplementation(mn.micronaut.kotlin.extension.functions)
     testImplementation(testLibs.kotest.framework.api)
     testImplementation(testLibs.kotest.assertions.core)
-    testImplementation(testLibs.kotest.extensions.testcontainers)
     testImplementation(testLibs.microutils.logging)
     testImplementation(mn.logback.classic)
     testImplementation(libs.logstash.logback.encoder)
+    testImplementation(testLibs.kafka.clients)
 
     testRuntimeOnly(mn.micronaut.http.server.netty)
 
     // TestContainers
     testFixturesCompileOnly(testLibs.kotest.framework.api)
-    testFixturesImplementation(mn.testcontainers.core)
+    testFixturesImplementation(testLibs.testcontainers.kafka)
+    testFixturesImplementation(testLibs.commons.codec) // required for testcontainers-kafka
     testFixturesImplementation(mn.kotlin.reflect)
 }
 
