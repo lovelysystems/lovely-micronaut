@@ -1,6 +1,6 @@
 # Changes
 
-## unreleased
+## 2025-09-03 / 1.2.0
 
 ### Feature
 
