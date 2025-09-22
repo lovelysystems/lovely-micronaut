@@ -20,16 +20,16 @@ repositories {
     mavenCentral()
 }
 
-if (JavaVersion.current() != JavaVersion.VERSION_17) {
-    // we require Java 17 here, to ensure we are always using the same version as the docker images are using
-    error("Java 17 is required for this Project, found ${JavaVersion.current()}")
+if (JavaVersion.current() != JavaVersion.VERSION_21) {
+    // we require Java 21 here, to ensure we are always using the same version as the docker images are using
+    error("Java 21 is required for this Project, found ${JavaVersion.current()}")
 }
 
 
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 

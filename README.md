@@ -4,4 +4,4 @@ This project contains opinionated shared packages used with Micronaut projects a
 
 ## Prerequisites
 
-- Java 17 installed and selected by default
+- Java 21 installed and selected by default
