@@ -1,0 +1,20 @@
+[versions]
+micronaut = "4.9.3"
+logstash = "8.1"
+
+detekt = "1.23.8"
+lovely-gradle = "1.16.0"
+kotlin = "2.2.20"
+kover = "0.9.2"
+ksp = "2.2.20-2.0.3"
+
+[libraries]
+logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logstash" }
+
+[plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-plugin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+lovely-gradle = { id = "com.lovelysystems.gradle", version.ref = "lovely-gradle" }

@@ -1,0 +1,14 @@
+[versions]
+kotest = "5.9.1"
+microutils-logging = "3.0.5"
+testcontainers = "1.21.3"
+commons-codec = "1.19.0"
+kafka-clients = "3.9.1"
+
+[libraries]
+kotest-framework-api = { module = "io.kotest:kotest-framework-api-jvm", version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+microutils-logging = { module = "io.github.microutils:kotlin-logging-jvm", version.ref = "microutils-logging" }
+testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "testcontainers" }
+commons-codec = { module = "commons-codec:commons-codec", version.ref = "commons-codec" }
+kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka-clients" }

@@ -1,12 +1,21 @@
 # Changes
 
-## [Unreleased]
+## Unreleased
 
 ### Feature
 
 - upgrade to java 21
-- upgrade to kotlin 2.1.21
+- upgrade to kotlin 2.2.20 and switch from kapt to ksp
 - upgrade to micronaut 4.9.3
+- upgrade to logstash-logback-encoder 8.1
+
+### Development
+
+- use `toml` files for version catalogs
+- upgrade to gradle 8.14.3
+- upgrade to lovely-gradle plugin 1.16.0
+- upgrade detekt to 1.23.8
+- upgrade kover to 0.9.2
 
 ## 2025-09-03 / 1.2.0
 

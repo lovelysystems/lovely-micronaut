@@ -1,13 +1,13 @@
 plugins {
-    kotlin("jvm")
-    id("com.lovelysystems.gradle")
-    id("io.micronaut.minimal.library")
-    kotlin("kapt")
-    kotlin("plugin.allopen")
     `maven-publish`
-    id("io.gitlab.arturbosch.detekt")
-    id("org.jetbrains.kotlinx.kover")
     `java-test-fixtures`
+    id("io.micronaut.minimal.library")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.lovely.gradle)
+    alias(libs.plugins.kotlin.plugin.allopen)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.kover)
 }
 
 lovely {
@@ -16,16 +16,10 @@ lovely {
 
 group = "com.lovelysystems"
 
-repositories {
-    mavenCentral()
-}
-
 if (JavaVersion.current() != JavaVersion.VERSION_21) {
     // we require Java 21 here, to ensure we are always using the same version as the docker images are using
     error("Java 21 is required for this Project, found ${JavaVersion.current()}")
 }
-
-
 
 kotlin {
     jvmToolchain {
@@ -34,13 +28,15 @@ kotlin {
 }
 
 kover {
-    koverReport {
-        verify {
-            onCheck = true
-            rule {
-                bound {
-                    minValue = 55
-                    metric = kotlinx.kover.gradle.plugin.dsl.MetricType.INSTRUCTION
+    reports {
+        total {
+            verify {
+                onCheck = true
+                rule {
+                    bound {
+                        minValue = 55
+                        coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.INSTRUCTION
+                    }
                 }
             }
         }
@@ -75,7 +71,6 @@ dependencies {
     //Testing
     testImplementation(mn.jackson.module.kotlin)
     testImplementation(mn.micronaut.kotlin.extension.functions)
-    testImplementation(testLibs.kotest.framework.api)
     testImplementation(testLibs.kotest.assertions.core)
     testImplementation(testLibs.microutils.logging)
     testImplementation(mn.logback.classic)
