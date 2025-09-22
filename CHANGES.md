@@ -5,7 +5,7 @@
 ### Feature
 
 - upgrade to java 21
-- upgrade to kotlin 2.2.20
+- upgrade to kotlin 2.1.21
 - upgrade to micronaut 4.9.3
 
 ## 2025-09-03 / 1.2.0
