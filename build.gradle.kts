@@ -4,7 +4,6 @@ plugins {
     id("io.micronaut.minimal.library")
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.lovely.gradle)
-    alias(libs.plugins.kotlin.plugin.allopen)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kover)
@@ -41,12 +40,6 @@ kover {
             }
         }
     }
-}
-
-allOpen {
-    annotations(
-        "jakarta.inject.Singleton",
-    )
 }
 
 micronaut {

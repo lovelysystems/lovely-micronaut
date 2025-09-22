@@ -14,7 +14,6 @@ logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-enc
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-plugin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 lovely-gradle = { id = "com.lovelysystems.gradle", version.ref = "lovely-gradle" }
