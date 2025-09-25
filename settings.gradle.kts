@@ -20,11 +20,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 
-    versionCatalogs {
-        create("testLibs") {
-            from(files("gradle/testLibs.versions.toml"))
-        }
-    }
 }
 
 rootProject.name = "lovely-micronaut"

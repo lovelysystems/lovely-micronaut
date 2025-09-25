@@ -64,18 +64,18 @@ dependencies {
     //Testing
     testImplementation(mn.jackson.module.kotlin)
     testImplementation(mn.micronaut.kotlin.extension.functions)
-    testImplementation(testLibs.kotest.assertions.core)
-    testImplementation(testLibs.kotlin.logging)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotlin.logging)
     testImplementation(mn.logback.classic)
     testImplementation(libs.logstash.logback.encoder)
-    testImplementation(testLibs.kafka.clients)
+    testImplementation(libs.kafka.clients)
 
     testRuntimeOnly(mn.micronaut.http.server.netty)
 
     // TestContainers
-    testFixturesCompileOnly(testLibs.kotest.framework.api)
-    testFixturesImplementation(testLibs.testcontainers.kafka)
-    testFixturesImplementation(testLibs.commons.codec) // required for testcontainers-kafka
+    testFixturesCompileOnly(libs.kotest.framework.api)
+    testFixturesImplementation(libs.testcontainers.kafka)
+    testFixturesImplementation(libs.commons.codec) // required for testcontainers-kafka
     testFixturesImplementation(mn.kotlin.reflect)
 }
 

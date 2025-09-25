@@ -1,5 +1,11 @@
 # Changes
 
+## unreleased
+
+### Development
+
+- remove testLibs version catalog and combine with libs
+
 ## 2025-09-25 / 1.3.0
 
 ### Feature
