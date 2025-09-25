@@ -65,7 +65,7 @@ dependencies {
     testImplementation(mn.jackson.module.kotlin)
     testImplementation(mn.micronaut.kotlin.extension.functions)
     testImplementation(testLibs.kotest.assertions.core)
-    testImplementation(testLibs.microutils.logging)
+    testImplementation(testLibs.kotlin.logging)
     testImplementation(mn.logback.classic)
     testImplementation(libs.logstash.logback.encoder)
     testImplementation(testLibs.kafka.clients)

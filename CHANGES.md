@@ -8,6 +8,7 @@
 - upgrade to kotlin 2.2.20 and switch from kapt to ksp
 - upgrade to micronaut 4.9.3
 - upgrade to logstash-logback-encoder 8.1
+- switch kotlin-logging from organization `io.github.microutils` to `io.github.oshai` and use latest version
 
 ### Development
 

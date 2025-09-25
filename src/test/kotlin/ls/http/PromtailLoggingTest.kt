@@ -14,13 +14,13 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.extensions.kotest5.annotation.MicronautTest
-import mu.KotlinLogging
 import org.slf4j.MDC
 import ch.qos.logback.classic.Logger
 import org.slf4j.LoggerFactory
 
 import ch.qos.logback.core.AppenderBase
 import ch.qos.logback.core.OutputStreamAppender
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.kotest.matchers.maps.shouldNotHaveKey
 import net.logstash.logback.encoder.LogstashEncoder
 
