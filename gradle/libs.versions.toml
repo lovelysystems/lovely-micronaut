@@ -1,11 +1,10 @@
 [versions]
 micronaut = "4.9.3"
-commons-codec = "1.19.0"
 kafka-clients = "3.9.1"
 kotest = "5.9.1"
 kotlin-logging = "7.0.13"
 logstash = "8.1"
-testcontainers = "1.21.3"
+testcontainers = "2.0.4"
 
 detekt = "1.23.8"
 lovely-gradle = "1.16.0"
@@ -18,8 +17,7 @@ kotest-framework-api = { module = "io.kotest:kotest-framework-api-jvm", version.
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 logstash-logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logstash" }
-testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "testcontainers" }
-commons-codec = { module = "commons-codec:commons-codec", version.ref = "commons-codec" }
+testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka", version.ref = "testcontainers" }
 kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka-clients" }
 
 [plugins]
