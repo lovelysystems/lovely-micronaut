@@ -4,6 +4,7 @@
 
 ### Development
 
+- upgrade testcontainers from 1.21.3 to 2.0.4
 - remove testLibs version catalog and combine with libs
 
 ## 2025-09-25 / 1.3.0

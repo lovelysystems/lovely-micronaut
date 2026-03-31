@@ -75,7 +75,6 @@ dependencies {
     // TestContainers
     testFixturesCompileOnly(libs.kotest.framework.api)
     testFixturesImplementation(libs.testcontainers.kafka)
-    testFixturesImplementation(libs.commons.codec) // required for testcontainers-kafka
     testFixturesImplementation(mn.kotlin.reflect)
 }
 
