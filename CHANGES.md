@@ -1,6 +1,6 @@
 # Changes
 
-## unreleased
+## 2026-03-31 / 1.4.0
 
 ### Development
 
