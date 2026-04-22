@@ -4,9 +4,7 @@
 
 ### Fix
 
-- fix `CachedSuspending` to truly refresh in the background: callers no longer block on
-  expiry, concurrent expiry hits share a single `block()` invocation, and
-  background-refresh failures are logged and swallowed instead of propagating
+- fix `CachedSuspending` to refresh in the background without blocking callers
 
 ## 2026-03-31 / 1.4.0
 

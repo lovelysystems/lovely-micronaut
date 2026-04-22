@@ -6,7 +6,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
-import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -243,5 +242,4 @@ private suspend fun awaitValue(
     }
     // One last attempt so the failure message is produced by the caller's shouldBe, not a timeout.
     predicate() shouldBe true
-    (System.nanoTime() - deadline) shouldBeGreaterThanOrEqual 0L
 }
