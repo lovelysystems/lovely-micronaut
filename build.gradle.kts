@@ -51,6 +51,7 @@ dependencies {
     // Kotlin
     implementation(mn.kotlinx.coroutines.core)
     implementation(mn.kotlinx.coroutines.reactor)
+    implementation(libs.kotlin.logging)
 
     // Micronaut
     implementation(mn.micronaut.http)
@@ -65,7 +66,6 @@ dependencies {
     testImplementation(mn.jackson.module.kotlin)
     testImplementation(mn.micronaut.kotlin.extension.functions)
     testImplementation(libs.kotest.assertions.core)
-    testImplementation(libs.kotlin.logging)
     testImplementation(mn.logback.classic)
     testImplementation(libs.logstash.logback.encoder)
     testImplementation(libs.kafka.clients)
