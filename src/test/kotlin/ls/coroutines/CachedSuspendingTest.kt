@@ -4,9 +4,11 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -158,7 +160,7 @@ class CachedSuspendingTest : ShouldSpec({
             // Trigger bg refresh that will throw inside the internal scope.
             cs() shouldBe "fresh"
             awaitValue(2.seconds) {
-                appender.list.any { it.level == Level.WARN && it.throwableProxy?.message == "boom-2" }
+                appender.list.any { it.level == Level.WARN && it.throwableProxy?.message?.contains("boom-2") == true }
             }
 
             // Stale value is still served; no exception propagates.
@@ -179,7 +181,7 @@ class CachedSuspendingTest : ShouldSpec({
             delay(80)
             cs() shouldBe "v1" // triggers failing refresh
             awaitValue(2.seconds) {
-                appender.list.any { it.level == Level.WARN && it.throwableProxy?.message == "transient" }
+                appender.list.any { it.level == Level.WARN && it.throwableProxy?.message?.contains("transient") == true }
             }
 
             // Sanity: expires was not advanced by the failure, so the next call
@@ -193,8 +195,49 @@ class CachedSuspendingTest : ShouldSpec({
                 error("cold-fail")
             }
 
-            val ex = runCatching { cs() }.exceptionOrNull()
-            (ex?.message ?: "") shouldBe "cold-fail"
+            val ex = shouldThrow<IllegalStateException> { cs() }
+            ex.message shouldBe "cold-fail"
+        }
+
+        should("reset the single-flight gate after a successful refresh so later expiries refresh again") {
+            val calls = AtomicInteger(0)
+            val cs = CachedSuspending(Duration.ofMillis(50)) { calls.incrementAndGet() }
+
+            cs() shouldBe 1
+            delay(80)
+            cs() shouldBe 1 // triggers 1st bg refresh
+            awaitValue(2.seconds) { cs() == 2 } // 1st refresh landed
+
+            delay(80)
+            cs() shouldBe 2 // triggers 2nd bg refresh (only works if the gate reset)
+            awaitValue(2.seconds) { cs() == 3 } // 2nd refresh landed
+
+            calls.get() shouldBe 3
+        }
+
+        should("silently drop CancellationException thrown from block() without logging a warning") {
+            val calls = AtomicInteger(0)
+            val cs = CachedSuspending(Duration.ofMillis(50)) {
+                when (calls.incrementAndGet()) {
+                    1 -> "v1"
+                    2 -> throw CancellationException("cancelled from block")
+                    else -> "v3"
+                }
+            }
+
+            cs() shouldBe "v1"
+            delay(80)
+            cs() shouldBe "v1" // triggers the cancellation-throwing refresh
+
+            // Wait past the cancelling refresh, trigger another, and wait for it to land.
+            // By the time v3 is visible, the 2nd block()'s coroutine has fully unwound,
+            // so any WARN it would have logged under a regression is already in the appender.
+            awaitValue(2.seconds) { calls.get() == 2 }
+            delay(80)
+            awaitValue(2.seconds) { cs() == "v3" }
+
+            // Cancellation is a structural signal, not a real error — must not be logged.
+            appender.list.none { it.level == Level.WARN } shouldBe true
         }
 
         should("survive cancellation of the caller that triggered the background refresh") {

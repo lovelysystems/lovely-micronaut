@@ -12,7 +12,7 @@ import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicBoolean
 
-private val log = KotlinLogging.logger {}
+private val logger = KotlinLogging.logger {}
 
 /**
  * A suspending value cache that always returns stale data and renews in the background.
@@ -22,7 +22,17 @@ private val log = KotlinLogging.logger {}
  * failures are logged and swallowed so callers keep receiving the stale value until a
  * later refresh succeeds.
  *
- * Intended for application-singleton use — the internal scope has no shutdown hook.
+ * The first call suspends until [block] produces a value; concurrent first-callers share
+ * that single invocation.
+ *
+ * Intended for application-singleton use — each instance owns an internal CoroutineScope
+ * that lives for the lifetime of the instance and is never cancelled. Do not construct
+ * per-request or per-call; that leaks a scope per instance.
+ *
+ * When caching a resource with its own server-side validity (OAuth tokens, signed URLs,
+ * etc.), pick [maxAge] comfortably shorter than that validity window. Expired callers
+ * receive the stale value until the background refresh completes, so [maxAge] equal to
+ * the upstream expiration can surface an already-rejected value to the caller.
  */
 class CachedSuspending<T : Any>(private val maxAge: Duration, private val block: suspend () -> T) {
 
@@ -42,28 +52,41 @@ class CachedSuspending<T : Any>(private val maxAge: Duration, private val block:
         return current.value
     }
 
+    // Known limitation: if many callers arrive before the first successful populate and block()
+    // persistently fails, they serialize on this mutex and each re-runs block() against the
+    // failing backend. Acceptable for singleton usage where cold start is rarely contended;
+    // revisit with a negative-caching window if herd behavior becomes a real problem.
     private suspend fun coldStart(): T = mutex.withLock {
         snapshot?.value ?: computeAndStore()
     }
 
     private fun triggerBackgroundRefresh() {
         if (!refreshing.compareAndSet(false, true)) return
-        scope.launch {
-            try {
-                mutex.withLock { computeAndStore() }
-            } catch (c: CancellationException) {
-                throw c
-            } catch (t: Throwable) {
-                log.warn(t) { "CachedSuspending background refresh failed" }
-            } finally {
-                refreshing.set(false)
+        try {
+            scope.launch {
+                try {
+                    mutex.withLock { computeAndStore() }
+                } catch (c: CancellationException) {
+                    throw c
+                } catch (e: Exception) {
+                    logger.warn(e) { "CachedSuspending background refresh failed" }
+                } finally {
+                    refreshing.set(false)
+                }
             }
+        } catch (e: Exception) {
+            // Scheduling itself failed; keep the gate unstuck so a later expiry can retry.
+            refreshing.set(false)
+            logger.warn(e) { "CachedSuspending failed to schedule background refresh" }
         }
     }
 
     private suspend fun computeAndStore(): T {
+        // Compute expiry before invoking block() so a pathological maxAge fails fast without
+        // running side effects we would then have to discard.
+        val expires = Instant.now() + maxAge
         val value = block()
-        snapshot = Snapshot(value, Instant.now() + maxAge)
+        snapshot = Snapshot(value, expires)
         return value
     }
 }
