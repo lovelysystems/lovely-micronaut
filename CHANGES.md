@@ -1,5 +1,11 @@
 # Changes
 
+## Unreleased
+
+### Fix
+
+- fix `CachedSuspending` to refresh in the background without blocking callers
+
 ## 2026-03-31 / 1.4.0
 
 ### Development
