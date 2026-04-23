@@ -14,3 +14,4 @@ out/
 .factorypath
 sandbox/
 *.log
+.context/

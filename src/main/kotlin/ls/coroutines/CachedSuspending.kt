@@ -15,12 +15,13 @@ import java.util.concurrent.atomic.AtomicBoolean
 private val logger = KotlinLogging.logger {}
 
 /**
- * A suspending value cache that always returns stale data and renews in the background.
+ * A suspending value cache that returns the cached value immediately and refreshes in the
+ * background when expired.
  *
- * On expiry, [invoke] returns the cached value immediately and schedules a refresh off
- * the caller's execution path. At most one refresh is in flight at any time; background
- * failures are logged and swallowed so callers keep receiving the stale value until a
- * later refresh succeeds.
+ * On expiry, [invoke] returns the cached value and schedules a refresh off the caller's
+ * execution path. At most one refresh is in flight at any time; background failures are
+ * logged and swallowed so callers keep receiving the stale value until a later refresh
+ * succeeds.
  *
  * The first call suspends until [block] produces a value; concurrent first-callers share
  * that single invocation.
