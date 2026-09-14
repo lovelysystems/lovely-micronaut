@@ -1,5 +1,15 @@
 # Changes
 
+## Unreleased
+
+### Feature
+
+- `RequestIdFilter` also puts the visitor id into the MDC, under `visitor`, so a log line can be
+  joined to the ingress access log rather than only to other lines of the same request. The cookie
+  it reads is configurable via `lovely.http.visitor-cookie` (default `op_visitor`), because this
+  library is shared and the cookie name is not. A cookie that is absent, or that does not match the
+  shape the ingress mints, logs `-` rather than its value.
+
 ## 2026-04-23 / 1.4.1
 
 ### Fix

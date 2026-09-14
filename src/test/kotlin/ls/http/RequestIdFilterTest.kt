@@ -10,12 +10,15 @@ import io.kotest.matchers.shouldBe
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.MediaType
+import io.micronaut.http.cookie.Cookie
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.extensions.kotest5.annotation.MicronautTest
 import org.slf4j.LoggerFactory
+
+private const val VALID_VISITOR_ID = "9b06fc462d83204abd16f53ee7f22882.1789393893.921"
 
 @MicronautTest(transactional = false)
 class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
@@ -47,6 +50,44 @@ class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         memoryAppender.list[0].message shouldBe "Hello World"
         // the requestId is stored in the MDC
         memoryAppender.list[0].mdcPropertyMap["requestId"] shouldBe "testId"
+    }
+
+    "the visitor cookie is stored in the MDC" {
+
+        val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
+            .cookie(Cookie.of("op_visitor", VALID_VISITOR_ID))
+        httpClient.toBlocking().exchange(request, String::class.java)
+
+        memoryAppender.list[0].mdcPropertyMap["visitor"] shouldBe VALID_VISITOR_ID
+    }
+
+    "a missing visitor cookie logs the absent marker" {
+
+        val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
+        httpClient.toBlocking().exchange(request, String::class.java)
+
+        memoryAppender.list[0].mdcPropertyMap["visitor"] shouldBe "-"
+    }
+
+    // A cookie is client-controlled and this value lands in a log line, so anything that is not
+    // the shape the ingress mints is dropped. A line-forging value is not in this list because it
+    // cannot be built: `Cookie.of` rejects a newline outright, as does the transport below it. The
+    // anchored match is the layer behind that, covering whatever reaches the filter by other means.
+    listOf(
+        "not-a-visitor-id",
+        VALID_VISITOR_ID.dropLast(1),
+        VALID_VISITOR_ID + "extra",
+        "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ.1789393893.921",
+        VALID_VISITOR_ID.replace(".", "-"),
+    ).forEach { bad ->
+        "a malformed visitor cookie logs the absent marker: ${bad.take(24)}" {
+
+            val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
+                .cookie(Cookie.of("op_visitor", bad))
+            httpClient.toBlocking().exchange(request, String::class.java)
+
+            memoryAppender.list[0].mdcPropertyMap["visitor"] shouldBe "-"
+        }
     }
 }) {
 
