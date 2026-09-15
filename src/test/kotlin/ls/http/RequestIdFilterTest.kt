@@ -71,15 +71,8 @@ class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         memoryAppender.list[0].mdcPropertyMap["visitorId"] shouldBe "-"
     }
 
-    // A cookie is client-controlled and this value lands in a log line, so anything that is not
-    // the shape the ingress mints is dropped. `Regex.matches` matches the whole input rather than
-    // searching it, so nothing can be appended to a valid id and survive.
-    //
-    // A line-forging value is not in this list because it cannot be sent: netty's
-    // `NettyHttpHeaders.validateHeader` rejects a newline when the client sets the cookie header,
-    // so the request never leaves. (`Cookie.of` itself accepts one -- the guard is the transport,
-    // not the cookie factory.) The anchored match is the layer behind that, for whatever reaches
-    // the filter by another route.
+    // Anchored, so nothing survives being appended to a valid id. A line-forging value is absent
+    // because netty's validateHeader rejects a newline before the request is sent.
     listOf(
         "not-a-visitor-id",
         VALID_VISITOR_ID.dropLast(1),
@@ -88,7 +81,7 @@ class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         VALID_VISITOR_ID.uppercase(),
         VALID_VISITOR_ID.replace(".", "-"),
     ).forEachIndexed { index, bad ->
-        // Indexed: several of these share a 24-char prefix, and kotest needs distinct test names.
+        // Indexed: several share a 24-char prefix and kotest needs distinct names.
         "a malformed visitor cookie logs the absent marker ($index)" {
 
             val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")

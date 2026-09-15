@@ -9,16 +9,10 @@ import io.micronaut.http.annotation.RequestFilter
 import io.micronaut.http.annotation.ServerFilter
 
 /**
- * Filter that adds the request id, and optionally a visitor id, to the MDC propagation context.
- *
- * The request id is taken from the `X-Request-ID` header. The visitor id is off by default: set
- * `lovely.http.visitor-cookie` to the cookie the ingress issues, and it is logged under `visitorId`
- * so a line can be joined to the access log for the same visit. Left unset, nothing is added --
- * this library is shared, and a visitor id is a tracking identifier that should not appear in a
- * service's logs because it upgraded.
- *
- * Note the cookie is minted on a response, so the first request of a visit carries none and logs
- * [ABSENT]. Joining works from the second request on.
+ * Adds the `X-Request-ID` header to the MDC as `requestId`, and optionally a cookie as
+ * `visitorId`. The visitor id is opt-in via `lovely.http.visitor-cookie`: it is a tracking
+ * identifier and this library is shared. The cookie is minted on a response, so the first
+ * request of a visit logs [ABSENT].
  */
 @ServerFilter(Filter.MATCH_ALL_PATTERN)
 class RequestIdFilter(
@@ -37,12 +31,7 @@ class RequestIdFilter(
         mutablePropagatedContext.add(context)
     }
 
-    /**
-     * The visitor id, or [ABSENT] when the cookie is missing or does not match the shape the
-     * ingress mints. A cookie is client-controlled and this value reaches a log line, so an
-     * unrecognised one is dropped rather than logged: an anchored match bounds it to hex digits
-     * and dots, which cannot break the line it is written on.
-     */
+    /** Client-controlled and bound for a log line, so the shape is matched whole or dropped. */
     private fun HttpRequest<*>.visitorId(): String =
         cookies.findCookie(visitorCookie)
             .map { it.value }
@@ -50,10 +39,9 @@ class RequestIdFilter(
             .orElse(ABSENT)
 
     companion object {
-        /** Logged when no usable visitor id is on the request. */
         const val ABSENT = "-"
 
-        /** Mirrors the ingress mint format: request id, unix seconds, milliseconds. */
+        /** The ingress mint format: request id, unix seconds, milliseconds. */
         private val VISITOR_ID_REGEX = Regex("[0-9a-f]{32}\\.[0-9]{10}\\.[0-9]{3}")
     }
 }

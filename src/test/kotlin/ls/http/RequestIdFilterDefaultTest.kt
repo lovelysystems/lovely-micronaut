@@ -14,11 +14,7 @@ import io.micronaut.http.cookie.Cookie
 import io.micronaut.test.extensions.kotest5.annotation.MicronautTest
 import org.slf4j.LoggerFactory
 
-/**
- * Visitor logging is opt-in. Without `lovely.http.visitor-cookie` no key is added at all, even
- * when the request carries a perfectly good cookie -- a shared library must not put a tracking
- * identifier into a service's logs just because it upgraded.
- */
+/** Visitor logging is opt-in: with no cookie name configured, no key is added at all. */
 @MicronautTest(transactional = false)
 class RequestIdFilterDefaultTest(@Client("/") httpClient: HttpClient) : FreeSpec({
     val memoryAppender = ListAppender<ILoggingEvent>()
