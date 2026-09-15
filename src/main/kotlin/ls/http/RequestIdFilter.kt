@@ -9,26 +9,30 @@ import io.micronaut.http.annotation.RequestFilter
 import io.micronaut.http.annotation.ServerFilter
 
 /**
- * Filter that adds the request id and the visitor id to the MDC propagation context, so every log
- * line written while serving the request can be joined to the ingress access log.
+ * Filter that adds the request id, and optionally a visitor id, to the MDC propagation context.
  *
- * The request id is taken from the `X-Request-ID` header. The visitor id is taken from a cookie
- * whose name is configurable, because this library is shared and the cookie is not: set
- * `lovely.http.visitor-cookie` to the name the ingress issues.
+ * The request id is taken from the `X-Request-ID` header. The visitor id is off by default: set
+ * `lovely.http.visitor-cookie` to the cookie the ingress issues, and it is logged under `visitorId`
+ * so a line can be joined to the access log for the same visit. Left unset, nothing is added --
+ * this library is shared, and a visitor id is a tracking identifier that should not appear in a
+ * service's logs because it upgraded.
+ *
+ * Note the cookie is minted on a response, so the first request of a visit carries none and logs
+ * [ABSENT]. Joining works from the second request on.
  */
 @ServerFilter(Filter.MATCH_ALL_PATTERN)
 class RequestIdFilter(
-    @param:Value("\${lovely.http.visitor-cookie:op_visitor}") private val visitorCookie: String,
+    @param:Value("\${lovely.http.visitor-cookie:}") private val visitorCookie: String,
 ) {
     @RequestFilter
     fun rememberRequestId(request: HttpRequest<*>, mutablePropagatedContext: MutablePropagatedContext) {
         val trackingId = request.headers.get("X-Request-ID")
         // trackingId or empty string
         val context = MdcPropagationContext(
-            mapOf(
-                "requestId" to trackingId.orEmpty(),
-                "visitor" to request.visitorId(),
-            )
+            buildMap {
+                put("requestId", trackingId.orEmpty())
+                if (visitorCookie.isNotBlank()) put("visitorId", request.visitorId())
+            }
         )
         mutablePropagatedContext.add(context)
     }
