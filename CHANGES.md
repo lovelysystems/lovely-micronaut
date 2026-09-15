@@ -1,5 +1,12 @@
 # Changes
 
+## Unreleased
+
+### Feature
+
+- `RequestIdFilter` can also log a visitor id from a cookie, under `visitorId`. Opt in with
+  `lovely.http.visitor-cookie`; unset, nothing changes.
+
 ## 2026-04-23 / 1.4.1
 
 ### Fix
