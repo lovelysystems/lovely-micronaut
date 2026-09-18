@@ -1,6 +1,6 @@
 # Changes
 
-## unreleased
+## 2026-09-18 / 1.5.1
 
 ### Fix
 
