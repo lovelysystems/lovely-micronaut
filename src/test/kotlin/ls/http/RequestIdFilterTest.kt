@@ -63,6 +63,15 @@ class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         memoryAppender.list[0].mdcPropertyMap["visitorId"] shouldBe VALID_VISITOR_ID
     }
 
+    "an appended click id is not part of the visitor id" {
+
+        val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
+            .cookie(Cookie.of("op_visitor", "$VALID_VISITOR_ID&g.EAIaIQobChMI5O6E0ZHolgMV"))
+        httpClient.toBlocking().exchange(request, String::class.java)
+
+        memoryAppender.list[0].mdcPropertyMap["visitorId"] shouldBe VALID_VISITOR_ID
+    }
+
     "a missing visitor cookie logs the absent marker" {
 
         val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
@@ -71,12 +80,14 @@ class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         memoryAppender.list[0].mdcPropertyMap["visitorId"] shouldBe "-"
     }
 
-    // Anchored, so nothing survives being appended to a valid id. A line-forging value is absent
-    // because netty's validateHeader rejects a newline before the request is sent.
+    // Anchored, so nothing survives being appended to a valid id except what follows the
+    // separator. A line-forging value is absent because netty's validateHeader rejects a newline
+    // before the request is sent.
     listOf(
         "not-a-visitor-id",
         VALID_VISITOR_ID.dropLast(1),
         VALID_VISITOR_ID + "extra",
+        "&$VALID_VISITOR_ID",
         "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ.1789393893.921",
         VALID_VISITOR_ID.uppercase(),
         VALID_VISITOR_ID.replace(".", "-"),

@@ -31,10 +31,16 @@ class RequestIdFilter(
         mutablePropagatedContext.add(context)
     }
 
-    /** Client-controlled and bound for a log line, so the shape is matched whole or dropped. */
+    /**
+     * Client-controlled and bound for a log line, so the shape is matched whole or dropped.
+     *
+     * The cookie may carry more than the id: the ingress appends an ad click id after an `&`.
+     * Only the part before the first separator is a visitor id, and matching the whole value
+     * would drop the id for every visitor who ever arrived on an ad.
+     */
     private fun HttpRequest<*>.visitorId(): String =
         cookies.findCookie(visitorCookie)
-            .map { it.value }
+            .map { it.value.substringBefore(SEPARATOR) }
             .filter { VISITOR_ID_REGEX.matches(it) }
             .orElse(ABSENT)
 
@@ -43,5 +49,8 @@ class RequestIdFilter(
 
         /** The ingress mint format: request id, unix seconds, milliseconds. */
         private val VISITOR_ID_REGEX = Regex("[0-9a-f]{32}\\.[0-9]{10}\\.[0-9]{3}")
+
+        /** What the ingress puts between the visitor id and anything it appends to it. */
+        private const val SEPARATOR = '&'
     }
 }
