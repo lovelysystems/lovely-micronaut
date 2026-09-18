@@ -1,5 +1,13 @@
 # Changes
 
+## unreleased
+
+### Fix
+
+- `RequestIdFilter` reads the visitor id from a cookie that carries more than the id. The ingress
+  appends an ad click id after an `&`, and matching the whole value dropped the id for every
+  visitor who had ever arrived on an ad.
+
 ## 2026-09-15 / 1.5.0
 
 ### Feature
