@@ -1,6 +1,6 @@
 # Changes
 
-## unreleased
+## 2026-09-22 / 1.5.2
 
 ### Fix
 
