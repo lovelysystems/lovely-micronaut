@@ -47,8 +47,16 @@ class RequestIdFilter(
     companion object {
         const val ABSENT = "-"
 
-        /** The ingress mint format: request id, unix seconds, milliseconds. */
-        private val VISITOR_ID_REGEX = Regex("[0-9a-f]{32}\\.[0-9]{10}\\.[0-9]{3}")
+        /**
+         * The two mint formats, either followed by unix seconds and milliseconds: the ingress uses
+         * nginx's 32-hex request id, and Cloudflare a dashed uuid for the pages it answers without
+         * the origin. An alternation rather than a widened character class, because this guards a
+         * log line against a crafted value and both shapes stay exact.
+         */
+        private val VISITOR_ID_REGEX = Regex(
+            "(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})" +
+                "\\.[0-9]{10}\\.[0-9]{3}"
+        )
 
         /** What the ingress puts between the visitor id and anything it appends to it. */
         private const val SEPARATOR = '&'

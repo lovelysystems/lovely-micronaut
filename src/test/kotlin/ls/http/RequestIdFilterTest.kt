@@ -21,6 +21,10 @@ import org.slf4j.LoggerFactory
 
 private const val VALID_VISITOR_ID = "9b06fc462d83204abd16f53ee7f22882.1789393893.921"
 
+/** What Cloudflare mints for the pages it answers without the origin: a dashed uuid, not a
+ *  32-hex request id. Taken verbatim from a real response. */
+private const val VALID_EDGE_VISITOR_ID = "b3bbabe2-0a8c-41a5-a020-cf1174c714fe.1790068944.471"
+
 @MicronautTest(transactional = false)
 @Property(name = "lovely.http.visitor-cookie", value = "op_visitor")
 class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
@@ -72,6 +76,24 @@ class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         memoryAppender.list[0].mdcPropertyMap["visitorId"] shouldBe VALID_VISITOR_ID
     }
 
+    "an edge-minted visitor cookie is stored in the MDC" {
+
+        val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
+            .cookie(Cookie.of("op_visitor", VALID_EDGE_VISITOR_ID))
+        httpClient.toBlocking().exchange(request, String::class.java)
+
+        memoryAppender.list[0].mdcPropertyMap["visitorId"] shouldBe VALID_EDGE_VISITOR_ID
+    }
+
+    "an edge-minted id carrying a click id keeps only the id" {
+
+        val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
+            .cookie(Cookie.of("op_visitor", "$VALID_EDGE_VISITOR_ID&g.EAIaIQobChMI5O6E0ZHolgMV"))
+        httpClient.toBlocking().exchange(request, String::class.java)
+
+        memoryAppender.list[0].mdcPropertyMap["visitorId"] shouldBe VALID_EDGE_VISITOR_ID
+    }
+
     "a missing visitor cookie logs the absent marker" {
 
         val request: HttpRequest<*> = HttpRequest.create<Any>(HttpMethod.GET, "/hello")
@@ -91,6 +113,9 @@ class RequestIdFilterTest(@Client("/") httpClient: HttpClient) : FreeSpec({
         "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ.1789393893.921",
         VALID_VISITOR_ID.uppercase(),
         VALID_VISITOR_ID.replace(".", "-"),
+        VALID_EDGE_VISITOR_ID.uppercase(),
+        VALID_EDGE_VISITOR_ID.replaceFirst("-", ""),
+        VALID_EDGE_VISITOR_ID.dropLast(1),
     ).forEachIndexed { index, bad ->
         // Indexed: several share a 24-char prefix and kotest needs distinct names.
         "a malformed visitor cookie logs the absent marker ($index)" {

@@ -1,5 +1,14 @@
 # Changes
 
+## unreleased
+
+### Fix
+
+- `RequestIdFilter` accepts a visitor id minted at the Cloudflare edge, a dashed uuid, alongside
+  the ingress's 32-hex request id. Cloudflare cannot produce the ingress shape -- stripping the
+  uuid's dashes needs a function its rule engine does not allow on our plan -- so an edge-minted
+  visitor logged as absent
+
 ## 2026-09-18 / 1.5.1
 
 ### Fix
